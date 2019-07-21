@@ -11,5 +11,5 @@ function init() {
 function update() {
     fillCanvas(".");
     fillRect("P", 50, 25, 30, 10, "red");
-    drawLink("test", "google.com", 59, 35, "blue");
+    drawLink("test", "http://www.google.com", 59, 35);
 }
