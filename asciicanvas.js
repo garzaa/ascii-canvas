@@ -125,16 +125,29 @@ function drawChar(c, x, y, color) {
         return;
     }
 
-    var tempCell = new Cell(c[0]);
+    var tempCell = new Cell(c);
     if (color) {
         tempCell.color = color;
     }
-    frameBuffer[y][x] = tempCell;
+    frameBuffer[y][x] = tempCell.getValue();
 }
 
 function drawText(line, x, y, color) {
-    for (var i=0; i<line.length; i++) {
-        drawChar(line[i], x+i, y, color);
+    lines = line.split("\n");
+    for (var h=0; h<lines.length; h++) {
+        var currLine = lines[h];
+        for (var i=0; i<currLine.length; i++) {
+            drawChar(currLine[i], x+i, y+h, color);
+        }
+    }
+}
+
+function drawLink(text, address, x, y) {
+    text = text.split("");
+    text[0] = "<a href=\""+address+"\">"+text[0];
+    text[text.length-1] = text[text.length-1]+"</a>";
+    for (var i=0; i<text.length; i++) {
+        frameBuffer[y][x+i] = text[i];
     }
 }
 
@@ -153,11 +166,21 @@ function drawLine(char, startX, startY, endX, endY, color) {
     }
 }
 
-function drawBox(char, xPos, yPos, xRad, yRad, color) {
+function drawRect(char, xPos, yPos, xRad, yRad, color) {
     drawLine(char, xPos-xRad, yPos-yRad, xPos-xRad, yPos+yRad, color);
     drawLine(char, xPos-xRad, yPos-yRad, xPos+xRad, yPos-yRad, color);
     drawLine(char, xPos+xRad, yPos+yRad, xPos-xRad, yPos+yRad, color);
     drawLine(char, xPos+xRad, yPos+yRad, xPos+xRad, yPos-yRad, color);
+}
+
+function fillRect(char, xPos, yPos, xRad, yRad, color) {
+    var startX = xPos - xRad;
+    var startY = yPos - yRad;
+    var endX = xPos + xRad;
+    var endY = yPos + yRad;
+    for (var i=startX; i<endX; i++) {
+        drawLine(char, i, startY, i, endY, color);
+    }
 }
 
 function drawCircle(char, xPos, yPos, xRad, yRad, step, color) {
@@ -187,7 +210,7 @@ function createCanvas(x, y, containerElement=document.body) {
     for (var i=0; i<y; i++) {
         tempRow = []
         for (var j=0; j<x; j++) {
-            tempRow.push(new Cell());
+            tempRow.push(null);
         }
         frameBuffer.push(tempRow);
     }
@@ -198,7 +221,7 @@ function drawCanvas() {
     for (var i=0; i<frameBuffer.length; i++) {
         var tempLine = [];
         for (var j=0; j<frameBuffer[i].length; j++) {
-            tempLine.push(frameBuffer[i][j].getValue());
+            tempLine.push(frameBuffer[i][j]);
         }
         lines.push(tempLine.join(""));
     }
@@ -209,7 +232,7 @@ function fillCanvas(content) {
     content = content[0];
     for (var i=0; i<frameBuffer.length; i++) {
         for (var j=0; j<frameBuffer[i].length; j++) {
-            frameBuffer[i][j] = new Cell(content);
+            frameBuffer[i][j] = new Cell(content).getValue();
         }
     }
 }
