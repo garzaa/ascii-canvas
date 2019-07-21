@@ -11,5 +11,5 @@ function init() {
 function update() {
     fillCanvas(".");
     var f = frameCount/16;
-    drawCircle("x", 50, 25, Math.sin(f)*radius, Math.cos(f)*radius*aspect, 2);
+    drawCircle("0", 50, 25, Math.sin(f)*radius, Math.cos(f)*radius*aspect, 2, "cyan");
 }

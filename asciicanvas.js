@@ -15,6 +15,20 @@ class Vector2 {
     }
 }
 
+class Cell {
+    color;
+    value;
+
+    constructor(value) {
+        this.value = value;
+        this.color = "inherit";
+    }
+
+    getValue() {
+        return "<span style='color:"+this.color+";'>"+this.value+"</span>";
+    }
+}
+
 function init() {
 
 }
@@ -53,7 +67,7 @@ function deg2rad(x) {
     return x * (Math.PI/180); 
 }
 
-function drawChar(c, x, y) {
+function drawChar(c, x, y, color) {
     x = Math.round(x);
     y = Math.round(y);
 
@@ -64,16 +78,20 @@ function drawChar(c, x, y) {
         console.error("Y cell of " +y+" greater than maximum "+frameBuffer.length);
     }
 
-    frameBuffer[y][x] = c[0];
+    var tempCell = new Cell(c[0]);
+    if (color) {
+        tempCell.color = color;
+    }
+    frameBuffer[y][x] = tempCell;
 }
 
-function drawCircle(char, xPos, yPos, xRad, yRad, step) {
+function drawCircle(char, xPos, yPos, xRad, yRad, step, color) {
     step = step || 10;
     for (var i=0; i<360; i+=step) {
         var r = deg2rad(i)
         var x = Math.cos(r)*xRad;
         var y = Math.sin(r)*yRad;
-        drawChar(char, xPos+x, yPos+y);
+        drawChar(char, xPos+x, yPos+y, color);
     }
 }
 
@@ -94,7 +112,7 @@ function createCanvas(x, y, containerElement=document.body) {
     for (var i=0; i<y; i++) {
         tempRow = []
         for (var j=0; j<x; j++) {
-            tempRow.push(null);
+            tempRow.push(new Cell());
         }
         frameBuffer.push(tempRow);
     }
@@ -103,16 +121,20 @@ function createCanvas(x, y, containerElement=document.body) {
 function drawCanvas() {
     var lines = [];
     for (var i=0; i<frameBuffer.length; i++) {
-        lines.push(frameBuffer[i].join(""));
+        var tempLine = [];
+        for (var j=0; j<frameBuffer[i].length; j++) {
+            tempLine.push(frameBuffer[i][j].getValue());
+        }
+        lines.push(tempLine.join(""));
     }
-    selfCanvas.innerText = lines.join("\n");
+    selfCanvas.innerHTML = lines.join("\n");
 }
 
 function fillCanvas(content) {
     content = content[0];
     for (var i=0; i<frameBuffer.length; i++) {
         for (var j=0; j<frameBuffer[i].length; j++) {
-            frameBuffer[i][j] = content;
+            frameBuffer[i][j] = new Cell(content);
         }
     }
 }
