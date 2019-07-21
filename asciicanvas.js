@@ -8,10 +8,33 @@ var updateInterval = 100;
 var aspect = 0.5;
 var frameCount = 0;
 
+function lerp(a, b, x) {
+    return a + x*(b-a);
+}
+
 class Vector2 {
     constructor(x, y) {
         this.x = x;
         this.y = y;
+    }
+    
+    distance(other) {
+        var dx = other.x - this.x;
+        var dy = other.y - this.y;
+        return Math.max(Math.abs(dx), Math.abs(dy));
+    }
+
+    round() {
+        this.x = Math.round(this.x);
+        this.y = Math.round(this.y);
+        return this;
+    }
+
+    lerp(other, t) {
+        return new Vector2(
+            lerp(this.x, other.x, t),
+            lerp(this.y, other.y, t)
+        );
     }
 }
 
@@ -71,11 +94,13 @@ function drawChar(c, x, y, color) {
     x = Math.round(x);
     y = Math.round(y);
 
-    if (x > frameBuffer[0].length) {
-        console.error("X cell of " +x+" greater than maximum "+frameBuffer[0].length);
+    if (x >= frameBuffer[0].length) {
+        console.warn("X cell of " +x+" greater than maximum "+frameBuffer[0].length);
+        return;
     }
-    if (y > frameBuffer.length) {
-        console.error("Y cell of " +y+" greater than maximum "+frameBuffer.length);
+    if (y >= frameBuffer.length) {
+        console.warn("Y cell of " +y+" greater than maximum "+frameBuffer.length);
+        return;
     }
 
     var tempCell = new Cell(c[0]);
@@ -83,6 +108,34 @@ function drawChar(c, x, y, color) {
         tempCell.color = color;
     }
     frameBuffer[y][x] = tempCell;
+}
+
+function drawText(line, x, y, color) {
+    for (var i=0; i<line.length; i++) {
+        drawChar(line[i], x+i, y, color);
+    }
+}
+
+function drawLine(char, startX, startY, endX, endY, color) {
+    var start = new Vector2(startX, startY);
+    var end = new Vector2(endX, endY);
+    var points = [];
+    var N = start.distance(end);
+    for (var step=0; step<=N; step++) {
+        var t = N == 0 ? 0.0 : step/N;
+        points.push(start.lerp(end, t).round());
+    }
+    for (var i=0; i<points.length; i++) {
+        var p = points[i];
+        drawChar(char, p.x, p.y, color);
+    }
+}
+
+function drawBox(char, xPos, yPos, xRad, yRad, color) {
+    drawLine(char, xPos-xRad, yPos-yRad, xPos-xRad, yPos+yRad, color);
+    drawLine(char, xPos-xRad, yPos-yRad, xPos+xRad, yPos-yRad, color);
+    drawLine(char, xPos+xRad, yPos+yRad, xPos-xRad, yPos+yRad, color);
+    drawLine(char, xPos+xRad, yPos+yRad, xPos+xRad, yPos-yRad, color);
 }
 
 function drawCircle(char, xPos, yPos, xRad, yRad, step, color) {

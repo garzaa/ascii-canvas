@@ -12,4 +12,6 @@ function update() {
     fillCanvas(".");
     var f = frameCount/16;
     drawCircle("0", 50, 25, Math.sin(f)*radius, Math.cos(f)*radius*aspect, 2, "cyan");
+    drawText("yee", 20, 20, "red");
+    drawBox("b", 50, 25, 30, 10, "lime")
 }
