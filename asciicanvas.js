@@ -38,6 +38,28 @@ class Vector2 {
     }
 }
 
+class Shape {
+    color;
+    char;
+    points = [];
+
+    constructor(char) {
+        this.char = char;
+    }
+
+    push(x, y) {
+        this.points.push(new Vector2(x, y));
+    }
+
+    draw() {
+        for (var i=0; i<this.points.length-1; i++) {
+            var p = this.points[i];
+            var np = this.points[i+1];
+            drawLine(this.char, p.x, p.y, np.x, np.y, this.color);
+        }
+    }
+}
+
 class Cell {
     color;
     value;
