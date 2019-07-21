@@ -68,15 +68,11 @@ function drawChar(c, x, y) {
 }
 
 function drawCircle(char, xPos, yPos, xRad, yRad, step) {
-    console.log("in radius: ", xRad, yRad);
     step = step || 10;
     for (var i=0; i<360; i+=step) {
-        console.log(i);
         var r = deg2rad(i)
-        console.log(r);
         var x = Math.cos(r)*xRad;
         var y = Math.sin(r)*yRad;
-        console.log("circle points: ", x, y);
         drawChar(char, xPos+x, yPos+y);
     }
 }
