@@ -1,5 +1,11 @@
 var radius = 20;
 
+var boxConfig = new BoxConfig("x");
+boxConfig.color = "darkslategray";
+boxConfig.cornerChars = "++++"
+boxConfig.hChar = "-"
+boxConfig.vChar = "|"
+
 function init() {
     createCanvas(101, 50, document.getElementById("canvas-container"));
     background("#2b2b2b");
@@ -9,7 +15,12 @@ function init() {
 }
 
 function update() {
-    fillCanvas(".");
-    fillRect("P", 50, 25, 30, 10, "red");
-    drawLink("test", "http://www.google.com", 59, 35);
+    fillRect(" ", 50, 25, 20, 5);
+    drawRect("c", 50, 25, 20, 5, boxConfig);
+    drawText(
+        "Welcome, traveler.\n\nStay a while.",
+        50, 26, 
+        "lightgray",
+        true
+    );
 }

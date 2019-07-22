@@ -74,6 +74,21 @@ class Cell {
     }
 }
 
+class BoxConfig {
+    char;
+    cornerChars;
+    hChar;
+    vChar;
+    color;
+
+    constructor(char) {
+        this.char = char;
+        this.cornerChars = char.repeat(4);
+        this.hChar = char;
+        this.vChar = char;
+    }
+}
+
 function init() {
 
 }
@@ -132,12 +147,20 @@ function drawChar(c, x, y, color) {
     frameBuffer[y][x] = tempCell.getValue();
 }
 
-function drawText(line, x, y, color) {
+function drawText(line, x, y, color, centered) {
     lines = line.split("\n");
+    var maxLineLength = 0;
+    var offsets = [];
+    lines.forEach(line => {
+        maxLineLength = Math.max(maxLineLength, line.length);
+    });
+    var xOffset = centered ? Math.round(maxLineLength/2) : 0;
+    var yOffset = centered ? Math.round(lines.length/2) : 0;
+
     for (var h=0; h<lines.length; h++) {
         var currLine = lines[h];
         for (var i=0; i<currLine.length; i++) {
-            drawChar(currLine[i], x+i, y+h, color);
+            drawChar(currLine[i], x+i-xOffset, y+h-yOffset, color);
         }
     }
 }
@@ -166,11 +189,20 @@ function drawLine(char, startX, startY, endX, endY, color) {
     }
 }
 
-function drawRect(char, xPos, yPos, xRad, yRad, color) {
-    drawLine(char, xPos-xRad, yPos-yRad, xPos-xRad, yPos+yRad, color);
-    drawLine(char, xPos-xRad, yPos-yRad, xPos+xRad, yPos-yRad, color);
-    drawLine(char, xPos+xRad, yPos+yRad, xPos-xRad, yPos+yRad, color);
-    drawLine(char, xPos+xRad, yPos+yRad, xPos+xRad, yPos-yRad, color);
+function drawRect(char, xPos, yPos, xRad, yRad, c) {
+    var c = c || new BoxConfig(char);
+    if (boxConfig.cornerChars.length != 4) {
+        console.error("cornerChars must be 4 characters describing clockwise corners, e.g. ╔╗╝╚")
+        return;
+    }
+    drawLine(c.hChar, xPos-xRad, yPos-yRad, xPos+xRad, yPos-yRad, c.color);
+    drawLine(c.vChar, xPos+xRad, yPos+yRad, xPos+xRad, yPos-yRad, c.color);
+    drawLine(c.hChar, xPos+xRad, yPos+yRad, xPos-xRad, yPos+yRad, c.color);
+    drawLine(c.vChar, xPos-xRad, yPos-yRad, xPos-xRad, yPos+yRad, c.color);
+    drawChar(c.cornerChars[0], xPos-xRad, yPos-yRad, c.color);
+    drawChar(c.cornerChars[1], xPos+xRad, yPos-yRad, c.color);
+    drawChar(c.cornerChars[2], xPos+xRad, yPos+yRad, c.color);
+    drawChar(c.cornerChars[3], xPos-xRad, yPos+yRad, c.color);
 }
 
 function fillRect(char, xPos, yPos, xRad, yRad, color) {
