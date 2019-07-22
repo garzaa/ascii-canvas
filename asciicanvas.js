@@ -12,6 +12,12 @@ function lerp(a, b, x) {
     return a + x*(b-a);
 }
 
+function randInt(range) {
+    var c = Math.round(Math.random()*range);
+    console.log(c);
+    return c;
+}
+
 class Vector2 {
     constructor(x, y) {
         this.x = x;
@@ -28,6 +34,11 @@ class Vector2 {
         this.x = Math.round(this.x);
         this.y = Math.round(this.y);
         return this;
+    }
+
+    add(other) {
+        this.x += other.x;
+        this.y += other.y;
     }
 
     lerp(other, t) {
@@ -165,9 +176,9 @@ function drawText(line, x, y, color, centered) {
     }
 }
 
-function drawLink(text, address, x, y) {
+function drawLink(text, properties, x, y) {
     text = text.split("");
-    text[0] = "<a href=\""+address+"\">"+text[0];
+    text[0] = `<a ${properties}>`+text[0];
     text[text.length-1] = text[text.length-1]+"</a>";
     for (var i=0; i<text.length; i++) {
         frameBuffer[y][x+i] = text[i];
