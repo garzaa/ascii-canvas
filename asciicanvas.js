@@ -161,7 +161,6 @@ function drawChar(c, x, y, color) {
 function drawText(line, x, y, color, centered) {
     lines = line.split("\n");
     var maxLineLength = 0;
-    var offsets = [];
     lines.forEach(line => {
         maxLineLength = Math.max(maxLineLength, line.length);
     });
@@ -172,6 +171,25 @@ function drawText(line, x, y, color, centered) {
         var currLine = lines[h];
         for (var i=0; i<currLine.length; i++) {
             drawChar(currLine[i], x+i-xOffset, y+h-yOffset, color);
+        }
+    }
+}
+
+function drawTransparentText(line, x, y, color, centered) {
+    lines = line.split("\n");
+    var maxLineLength = 0;
+    lines.forEach(line => {
+        maxLineLength = Math.max(maxLineLength, line.length);
+    });
+    var xOffset = centered ? Math.round(maxLineLength/2) : 0;
+    var yOffset = centered ? Math.round(lines.length/2) : 0;
+
+    for (var h=0; h<lines.length; h++) {
+        var currLine = lines[h];
+        for (var i=0; i<currLine.length; i++) {
+            if (currLine[i] != " ") {
+                drawChar(currLine[i], x+i-xOffset, y+h-yOffset, color);
+            }
         }
     }
 }
